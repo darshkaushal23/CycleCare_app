@@ -19,7 +19,7 @@ export function CommunityPage(){
  async function refresh(){if(!communityConfigured)return;try{const m=await getMembership();setMember(m);if(m){const s=await getStaff(m.user_id);setStaff(s);setItems(await readPosts());}}catch(e){setError(e.message)}finally{setLoading(false)}}
  useEffect(()=>{refresh()},[]);
  async function join(space){setError("");setLoading(true);try{await joinCircle(space);await refresh()}catch(e){setError(e.message);setLoading(false)}}
- async function post(e){e.preventDefault();setError("");try{await submitPost(member,{title:replyTo?"":title.trim(),body:body.trim(),topic:replyTo?.topic||topic==="All"?"Periods":topic,parent_id:replyTo?.id||null});setTitle("");setBody("");setReplyTo(null);setNotice("Sent for review. Only you can see it until approved.");await refresh()}catch(e){setError(e.message)}}
+ async function post(e){e.preventDefault();setError("");try{await submitPost(member,{title:replyTo?"":title.trim(),body:body.trim(),topic:replyTo?.topic || (topic==="All"?"Periods":topic),parent_id:replyTo?.id||null});setTitle("");setBody("");setReplyTo(null);setNotice("Sent for review. Only you can see it until approved.");await refresh()}catch(e){setError(e.message)}}
  async function action(post,changes){try{await moderatePost(post,changes);await refresh()}catch(e){setError(e.message)}}
  const shown=items.filter(p=>(staff&&moderation?p.status==="pending":p.status==="approved"||p.author_id===member?.user_id)&&(!topic||topic==="All"||p.topic===topic)&&(!query||[p.title,p.body].join(" ").toLowerCase().includes(query.toLowerCase())));
  return <div className="mx-auto max-w-4xl space-y-5 pb-8">
@@ -33,7 +33,7 @@ export function CommunityPage(){
  {staff?<button className="rounded-xl bg-lavender-200 px-4 py-3" onClick={()=>setModeration(v=>!v)}>{moderation?"Back to community":"Review pending posts"}</button>:null}
  {!moderation?<form onSubmit={post} className="space-y-3 rounded-3xl bg-white p-5 shadow-sm"><h2 className="font-display text-xl">{replyTo?"Reply to this question":"Ask a question"}</h2>
  {replyTo?<button type="button" onClick={()=>setReplyTo(null)} className="text-sm underline">Cancel reply</button>:<input required maxLength={120} value={title} onChange={e=>setTitle(e.target.value)} placeholder="Write your question" aria-label="Question title" className="w-full rounded-xl border border-lavender-200 p-3"/>}
- <select value={replyTo?.topic||topic==="All"?"Periods":topic} disabled={Boolean(replyTo)} onChange={e=>setTopic(e.target.value)} className="w-full rounded-xl border border-lavender-200 p-3">{topics.map(t=><option key={t}>{t}</option>)}</select>
+ <select value={replyTo?.topic || (topic==="All"?"Periods":topic)} disabled={Boolean(replyTo)} onChange={e=>setTopic(e.target.value)} className="w-full rounded-xl border border-lavender-200 p-3">{topics.map(t=><option key={t}>{t}</option>)}</select>
  <textarea required minLength={4} maxLength={2000} value={body} onChange={e=>setBody(e.target.value)} placeholder="Share your question without personal details…" className="min-h-24 w-full rounded-xl border border-lavender-200 p-3"/>
  <button className="inline-flex items-center gap-2 rounded-xl bg-lavender-700 px-5 py-3 text-white"><Send size={17}/> Send for review</button></form>:null}
  <div className="flex flex-wrap gap-2">{["All",...topics].map(t=><button key={t} onClick={()=>setTopic(t)} className={"rounded-full px-3 py-2 text-sm "+(topic===t?"bg-lavender-700 text-white":"bg-white text-ink-700")}>{t}</button>)}</div>

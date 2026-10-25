@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Doodle } from "../components/art/Doodles";
 import { Button } from "../components/ui/Button";
 import { Card, CardKicker, CardTitle } from "../components/ui/Card";
 import { ChoiceButton, ChoiceGroup } from "../components/ui/Input";
@@ -70,10 +71,13 @@ export function SettingsPage() {
 
   return (
     <div className="page-enter mx-auto max-w-2xl space-y-4">
-      <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-lavender-500">{t("nav.settings")}</p>
-        <h1 className="mt-1 font-display text-3xl">{t("settings.title")}</h1>
-        <p className="mt-2 text-sm text-ink-500">{t("settings.intro")}</p>
+      <header className="flex items-start gap-3">
+        <Doodle kind="notebook" className="h-14 w-14 shrink-0" />
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-lavender-500">{t("nav.settings")}</p>
+          <h1 className="mt-1 font-display text-3xl">{t("settings.title")}</h1>
+          <p className="mt-2 text-sm text-ink-500">{t("settings.intro")}</p>
+        </div>
       </header>
 
       <Card>
@@ -86,6 +90,14 @@ export function SettingsPage() {
             हिन्दी
           </ChoiceButton>
         </div>
+      </Card>
+
+      <Card>
+        <CardTitle>{t("settings.tour")}</CardTitle>
+        <p className="mt-2 text-base text-ink-500">{t("settings.tourHint")}</p>
+        <Button className="mt-4 w-full" variant="secondary" onClick={() => updateSettings({ tourComplete: false })}>
+          {t("settings.tour")}
+        </Button>
       </Card>
 
       <Card>
@@ -149,7 +161,7 @@ export function SettingsPage() {
           variant={settings.readAloud ? "primary" : "secondary"}
           onClick={() => updateSettings({ readAloud: !settings.readAloud })}
         >
-          {settings.readAloud ? t("settings.discreetOn") : t("settings.discreetOff")}
+          {settings.readAloud ? t("settings.readAloudOn") : t("settings.readAloudOff")}
         </Button>
       </Card>
 
@@ -239,9 +251,11 @@ export function SettingsPage() {
 
       <Card>
         <CardTitle>{t("settings.privacy")}</CardTitle>
-        <ul className="mt-3 space-y-2 text-sm text-ink-700">
+        <ul className="mt-3 grid gap-2">
           {t("settings.privacyItems").map((item) => (
-            <li key={item}>• {item}</li>
+            <li key={item} className="rounded-2xl bg-cream-50 px-3 py-2 text-sm text-ink-700">
+              {item}
+            </li>
           ))}
         </ul>
       </Card>

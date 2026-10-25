@@ -4,6 +4,13 @@
 
 :root {
   color-scheme: light;
+  --app-nav-h: 0px;
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --app-nav-h: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 html.high-contrast {
@@ -11,8 +18,8 @@ html.high-contrast {
 }
 
 html.high-contrast body {
-  background: #fff8ef;
-  color: #1a1612;
+  background: #fff8f2;
+  color: #3d2c4a;
 }
 
 html,
@@ -25,12 +32,14 @@ body,
 
 body {
   margin: 0;
+  font-size: 16px;
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(237, 231, 246, 0.9), transparent 55%),
-    radial-gradient(900px 500px at 100% 0%, rgba(248, 230, 233, 0.8), transparent 50%),
-    #f8f2ea;
-  color: #2c2722;
-  font-family: "Outfit", system-ui, sans-serif;
+    radial-gradient(1100px 560px at 8% -12%, rgba(233, 221, 247, 0.95), transparent 58%),
+    radial-gradient(900px 480px at 100% 0%, rgba(246, 193, 207, 0.55), transparent 52%),
+    radial-gradient(700px 400px at 70% 110%, rgba(249, 223, 204, 0.55), transparent 50%),
+    #fff8f2;
+  color: #3d2c4a;
+  font-family: "Nunito Sans", "Nirmala UI", "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -39,8 +48,12 @@ body {
   isolation: isolate;
 }
 
+#main :is(button, input, textarea, select, [role="slider"]) {
+  scroll-margin-bottom: calc(var(--app-nav-h) + 8rem);
+}
+
 *:focus-visible {
-  outline: 2px solid #6f57a5;
+  outline: 2px solid #563f68;
   outline-offset: 3px;
 }
 
@@ -50,8 +63,8 @@ body {
   top: -3rem;
   z-index: 80;
   border-radius: 999px;
-  background: #4e3b78;
-  color: white;
+  background: #563f68;
+  color: #fffcfa;
   padding: 0.5rem 1rem;
 }
 
@@ -61,6 +74,78 @@ body {
 
 .page-enter {
   animation: rise 420ms ease both;
+}
+
+#main p,
+#main li,
+#main label,
+#main dd {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.ui-input {
+  min-height: 3rem;
+  width: 100%;
+  border-radius: 1.05rem;
+  background: #fffcfa;
+  padding: 0.65rem 0.9rem;
+  font-size: 1rem;
+  box-shadow: inset 0 0 0 1px #d8c6ee;
+}
+
+.ui-input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #563f68;
+}
+
+/* `plum` is a CSS named color; some pipelines drop Tailwind's .bg-plum utility.
+   Keep the token painted so cream label text never sits on a white button. */
+.bg-plum {
+  --tw-bg-opacity: 1;
+  background-color: rgb(86 63 104 / var(--tw-bg-opacity, 1));
+}
+
+.text-plum {
+  --tw-text-opacity: 1;
+  color: rgb(86 63 104 / var(--tw-text-opacity, 1));
+}
+
+.ring-plum {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(86 63 104 / var(--tw-ring-opacity, 1));
+}
+
+.log-page {
+  padding-bottom: calc(var(--app-nav-h) + 12rem);
+}
+
+.log-page [data-log-step] {
+  scroll-margin-bottom: calc(var(--app-nav-h) + 10rem);
+}
+
+.log-dock {
+  position: fixed;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: calc(var(--app-nav-h) + 0.5rem);
+  z-index: 28;
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .log-page {
+    padding-bottom: 1.5rem;
+  }
+
+  .log-dock {
+    position: sticky;
+    left: auto;
+    right: auto;
+    bottom: 1rem;
+    max-width: none;
+  }
 }
 
 @keyframes rise {

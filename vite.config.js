@@ -6,4 +6,21 @@ export default defineConfig({
   test: {
     environment: "node",
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/recharts") || id.includes("node_modules/victory-vendor") || id.includes("node_modules/d3-")) {
+            return "charts";
+          }
+          if (id.includes("node_modules/react-dom") || id.includes("node_modules/react-router") || id.includes("node_modules/react/")) {
+            return "react";
+          }
+          if (id.includes("node_modules/lucide-react")) {
+            return "icons";
+          }
+        },
+      },
+    },
+  },
 });

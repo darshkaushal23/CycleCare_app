@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
-import { ClipboardPlus, FileText, HeartPulse, Sprout } from "lucide-react";
+import { Doodle } from "../components/art/Doodles";
 import { CycleConfidence } from "../components/CycleConfidence";
-import { Card, CardTitle } from "../components/ui/Card";
+import { MeanTip } from "../components/MeanTip";
+import { Button } from "../components/ui/Button";
+import { Card, CardKicker, CardTitle } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/States";
 import { useAppState } from "../context/AppState";
 import { evaluateCare } from "../lib/careEngine";
 import { buildInsights } from "../lib/cycle";
 import { formatDisplayDate, todayISO } from "../lib/dates";
+import { LESSONS } from "../lib/learnContent";
 import { reminderBanners } from "../lib/reminders";
 
 function greetingKey(date = new Date()) {
@@ -16,8 +19,49 @@ function greetingKey(date = new Date()) {
   return "today.greetingEvening";
 }
 
+function greetingDoodle(date = new Date()) {
+  const hour = date.getHours();
+  if (hour < 12) return "flower";
+  if (hour < 17) return "sun";
+  return "moon";
+}
+
 function fill(template, vars) {
   return Object.entries(vars).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template);
+}
+
+function CycleRing({ day }) {
+  return (
+    <svg className="h-20 w-20 shrink-0" viewBox="0 0 80 80" aria-hidden="true">
+      <circle cx="40" cy="40" r="28" fill="#FFF5F8" stroke="#E9DDF7" strokeWidth="8" />
+      <circle
+        cx="40"
+        cy="40"
+        r="28"
+        fill="none"
+        stroke="#D987A3"
+        strokeWidth="8"
+        strokeLinecap="round"
+        strokeDasharray={`${Math.min(160, 12 + (Number(day) || 0) * 3)} 176`}
+        transform="rotate(-90 40 40)"
+      />
+      <text x="40" y="44" textAnchor="middle" fontSize="16" fill="#563F68" fontFamily="Fraunces, Georgia, serif">
+        {day ?? "—"}
+      </text>
+    </svg>
+  );
+}
+
+function QuickLink({ to, doodle, label }) {
+  return (
+    <Link
+      to={to}
+      className="flex min-h-[5.5rem] flex-col items-center justify-center gap-1.5 rounded-2xl bg-cream-50 p-3 text-center text-xs font-medium text-ink-900 ring-1 ring-lavender-100 motion-safe:transition hover:bg-lavender-50 hover:ring-lavender-300 sm:text-sm"
+    >
+      <Doodle kind={doodle} className="h-10 w-10" />
+      {label}
+    </Link>
+  );
 }
 
 export function Today() {
@@ -25,6 +69,7 @@ export function Today() {
   const locale = lang === "hi" ? "hi-IN" : "en-IN";
   const empty = periods.length === 0 && logs.length === 0;
   const today = todayISO();
+  const todayLog = logs.find((log) => log.date === today);
   const guidance = evaluateCare({
     periods,
     logs,
@@ -44,8 +89,10 @@ export function Today() {
   });
   const position = analysis.position ?? { day: null, phase: "none" };
   const missed = analysis.prediction?.possibleMissed ?? [];
+  const lesson = LESSONS[0]?.[lang] ?? LESSONS[0]?.en;
+  const window = analysis.prediction?.window;
 
-  let insightLine = t("today.insightNone");
+  let insightLine = lesson ? lesson.summary : t("today.insightNone");
   if (pattern?.kind === "cycle-days") {
     insightLine = fill(t("insights.patternDays"), {
       symptom: t(`log.symptomOpts.${pattern.id}`),
@@ -56,81 +103,106 @@ export function Today() {
     insightLine = fill(t("insights.energyPre"), { n: String(pattern.cycles) });
   }
 
+  const quick = (
+    <div>
+      <p className="mb-2 text-base font-medium text-ink-700">{t("today.quickTitle")}</p>
+      <div className="grid grid-cols-2 gap-2">
+        <QuickLink to={`/log?date=${today}`} doodle="journal" label={t("nav.log")} />
+        <QuickLink to="/calendar" doodle="calendar" label={t("nav.calendar")} />
+        <QuickLink to="/learn" doodle="first" label={t("nav.learn")} />
+        <QuickLink to="/care" doodle="care" label={t("nav.care")} />
+      </div>
+    </div>
+  );
+
   return (
     <div className="page-enter mx-auto max-w-3xl space-y-4">
-      <header>
-        <p className="text-sm text-ink-500">
-          {formatDisplayDate(today, locale, { weekday: "long", day: "numeric", month: "long" })}
-        </p>
-        <h1 className="mt-1 font-display text-3xl text-ink-900 md:text-4xl">{t(greetingKey())}</h1>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-500">{t("today.studentLine")}</p>
+      <header className="flex items-start gap-3">
+        <Doodle kind={greetingDoodle()} className="h-16 w-16 shrink-0" />
+        <div className="min-w-0">
+          <p className="text-sm text-ink-500">
+            {formatDisplayDate(today, locale, { weekday: "long", day: "numeric", month: "long" })}
+          </p>
+          <h1 className="mt-1 font-display text-3xl text-ink-900 md:text-4xl">{t(greetingKey())}</h1>
+          <p className="mt-1 text-base text-ink-500">{t("today.studentLine")}</p>
+        </div>
       </header>
 
       {banners.map((banner) => (
-        <Link key={banner.id} to={banner.to} className="block rounded-2xl bg-lavender-100 px-4 py-3 text-sm text-lavender-700">
+        <Link key={banner.id} to={banner.to} className="block rounded-2xl bg-lavender-100 px-4 py-3 text-sm text-plum">
           {lang === "hi" ? banner.hi : banner.en}
         </Link>
       ))}
 
       {settings.isDemo ? (
-        <>
-          <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700" role="status">
-            {t("today.demoBanner")}
-          </p>
-          <Card>
-            <CardTitle>{t("walkthrough.title")}</CardTitle>
-            <p className="mt-2 text-sm text-ink-500">{t("walkthrough.body")}</p>
-            <ol className="mt-3 grid gap-2">
-              {t("walkthrough.steps").map((step) => (
-                <li key={step.to}>
-                  <Link
-                    to={step.to}
-                    className="flex min-h-11 items-center rounded-2xl bg-lavender-50 px-3 text-sm text-lavender-700"
-                  >
-                    {step.label}
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </Card>
-        </>
+        <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700" role="status">
+          {t("today.demoBanner")}
+        </p>
       ) : null}
 
       {empty ? (
-        <EmptyState
-          icon={Sprout}
-          title={t("today.emptyTitle")}
-          body={t("today.emptyBody")}
-          action={
-            <Link
-              to="/log"
-              className="mt-5 inline-flex h-12 w-full items-center justify-center rounded-2xl bg-lavender-700 text-sm font-medium text-white"
-            >
-              {t("today.emptyCta")}
-            </Link>
-          }
-          secondary={
-            settings.isDemo ? null : (
-              <button type="button" className="mt-3 text-sm text-lavender-700 underline" onClick={loadDemo}>
-                {t("today.emptyDemo")}
-              </button>
-            )
-          }
-        />
+        <>
+          <EmptyState
+            title={t("today.emptyTitle")}
+            body={t("today.emptyBody")}
+            action={
+              <>
+                <ol className="mt-4 space-y-1.5 px-1 text-left text-base text-ink-800">
+                  {t("today.startSteps").map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+                <Link to="/log" className="mt-5 block">
+                  <Button className="w-full">{t("today.emptyCta")}</Button>
+                </Link>
+              </>
+            }
+            secondary={
+              settings.isDemo ? null : (
+                <button type="button" className="mt-3 text-sm text-plum underline" onClick={loadDemo}>
+                  {t("today.emptyDemo")}
+                </button>
+              )
+            }
+          />
+          {quick}
+        </>
       ) : (
         <>
-          {position.day != null ? (
-            <Card>
-              <p className="text-xs uppercase tracking-wide text-lavender-500">{fill(t("today.cycleDay"), { n: String(position.day) })}</p>
-              <p className="mt-2 text-lg leading-relaxed text-ink-800">{t(`today.phase.${position.phase}`)}</p>
-              <Link
-                to={`/log?date=${today}`}
-                className="mt-4 inline-flex h-12 items-center justify-center rounded-2xl bg-lavender-700 px-5 text-sm font-medium text-white"
-              >
-                {t("today.logToday")}
-              </Link>
-            </Card>
-          ) : null}
+          <Card>
+            <div className="flex items-center gap-4">
+              <CycleRing day={position.day} />
+              <div className="min-w-0">
+                <CardKicker>{t("today.overview")}</CardKicker>
+                <p className="mt-1 font-display text-2xl text-ink-900">
+                  {position.day != null ? fill(t("today.cycleDay"), { n: String(position.day) }) : t("today.noWindow")}
+                </p>
+                <p className="mt-1 text-base text-ink-700">{t(`today.phase.${position.phase}`)}</p>
+                {position.estimated ? <p className="mt-1 text-base text-ink-500">{t("today.estimate")}</p> : null}
+                {["follicular", "ovulation", "luteal", "fertile"].includes(position.phase) ? (
+                  <MeanTip t={t}>{t("today.contraception")}</MeanTip>
+                ) : null}
+              </div>
+            </div>
+            <div className="mt-4 rounded-2xl bg-lavender-50 p-3">
+              <p className="text-base font-medium text-ink-700">{t("today.nextWindow")}</p>
+              {window ? (
+                <p className="mt-1 font-display text-xl">
+                  {formatDisplayDate(window.start, locale, { day: "numeric", month: "short" })}
+                  {" – "}
+                  {formatDisplayDate(window.end, locale, { day: "numeric", month: "short" })}
+                </p>
+              ) : (
+                <p className="mt-1 text-base">{t("today.needMore")}</p>
+              )}
+              <p className="mt-1 text-sm text-ink-500">{t("today.nextHint")}</p>
+            </div>
+            <Link to={`/log?date=${today}`} className="mt-4 block">
+              <Button className="w-full">{t("today.logToday")}</Button>
+            </Link>
+          </Card>
+
+          {quick}
 
           <CycleConfidence
             analysis={analysis}
@@ -152,14 +224,27 @@ export function Today() {
           ) : null}
 
           {analysis.prediction?.irregular ? (
-            <Link to="/care" className="block text-sm font-medium text-lavender-700">
+            <Link to="/care" className="block text-sm font-medium text-plum">
               {t("today.seeDoctor")}
             </Link>
           ) : null}
 
           <Card>
-            <p className="text-xs uppercase tracking-wide text-ink-500">{t("insights.patterns")}</p>
-            <p className="mt-2 text-sm leading-relaxed text-ink-800">{insightLine}</p>
+            <div className="flex items-start gap-3">
+              <Doodle kind="journal" className="h-12 w-12 shrink-0" />
+              <div>
+                <p className="text-base font-medium text-ink-700">{lesson?.title ?? t("nav.learn")}</p>
+                <p className="mt-2 text-base leading-relaxed text-ink-800">{insightLine}</p>
+                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                  <Link to="/insights" className="inline-block text-base font-medium text-plum">
+                    {t("nav.insights")}
+                  </Link>
+                  <Link to="/learn" className="inline-block text-base font-medium text-plum">
+                    {t("learn.readMore")}
+                  </Link>
+                </div>
+              </div>
+            </div>
           </Card>
 
           {analysis.lastPeriod ? (
@@ -175,36 +260,25 @@ export function Today() {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <Card>
-          <HeartPulse className="h-5 w-5 text-rose-500" />
+          <Doodle kind="care" className="h-12 w-12" />
           <CardTitle className="mt-3">{t("today.careTeaserTitle")}</CardTitle>
-          <p className="mt-2 text-sm leading-relaxed text-ink-500">{t("today.careTeaserBody")}</p>
+          <p className="mt-2 text-sm text-ink-500">{t("today.careTeaserBody")}</p>
           {guidance.cards.length ? (
             <p className="mt-2 text-sm text-ink-700">
               {guidance.cards.length} {lang === "hi" ? "संकेत" : "flags"}
               {urgentCount ? ` · ${urgentCount} ${t("care.urgentLegend").toLowerCase()}` : ""}
             </p>
           ) : null}
-          <Link to="/care" className="mt-4 inline-flex h-11 items-center text-sm font-medium text-lavender-700">
+          <Link to="/care" className="mt-4 inline-flex h-11 items-center text-sm font-medium text-plum">
             {t("today.openCare")}
           </Link>
         </Card>
         <Card>
-          <FileText className="h-5 w-5 text-lavender-700" />
+          <Doodle kind="notebook" className="h-12 w-12" />
           <CardTitle className="mt-3">{t("today.openVisit")}</CardTitle>
-          <p className="mt-2 text-sm leading-relaxed text-ink-500">{t("visit.notDiagnosis")}</p>
-          <Link to="/visit" className="mt-4 inline-flex h-11 items-center text-sm font-medium text-lavender-700">
+          <p className="mt-2 text-sm text-ink-500">{t("visit.notDiagnosis")}</p>
+          <Link to="/visit" className="mt-4 inline-flex h-11 items-center text-sm font-medium text-plum">
             {t("care.openVisit")}
-          </Link>
-        </Card>
-        <Card>
-          <ClipboardPlus className="h-5 w-5 text-lavender-700" />
-          <CardTitle className="mt-3">{t("today.quickLog")}</CardTitle>
-          <p className="mt-2 text-sm leading-relaxed text-ink-500">{t("today.comingLog")}</p>
-          <Link
-            to={`/log?date=${today}`}
-            className="mt-4 inline-flex h-11 items-center text-sm font-medium text-lavender-700"
-          >
-            {t("today.logToday")}
           </Link>
         </Card>
       </div>

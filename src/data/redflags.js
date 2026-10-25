@@ -257,7 +257,7 @@ export function evaluateRedFlags({
     );
   }
 
-  const lengths = prediction?.allCycleLengths ?? [];
+  const lengths = prediction?.cycleLengths ?? [];
   const unusualRun = consecutiveUnusual(lengths, shortLimit, longLimit);
   if (unusualRun >= CONFIG.consecutiveUnusualCycles) {
     cards.push(

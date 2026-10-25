@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   MAX_CYCLES_USED,
+  buildInsights,
   derivePeriodsFromLogs,
   getCompleteCycles,
   isBleedingLog,
@@ -9,6 +10,7 @@ import {
   predictNextPeriod,
   uncertaintySpread,
 } from "./cycle";
+import { analyzeCycles } from "./cycleAnalysis";
 import { addDays } from "./dates";
 
 function periodLogs(start, length, extras = {}) {
@@ -111,7 +113,41 @@ describe("predictions", () => {
     const prediction = predictNextPeriod(periods);
     expect(prediction.possibleMissed.length).toBeGreaterThan(0);
     expect(prediction.cycleLengths.every((length) => length < 60)).toBe(true);
+    expect(prediction.medianLength).toBe(28);
     expect(prediction.canPredict).toBe(true);
+    const analysis = analyzeCycles(periods, [], "2026-06-08");
+    expect(analysis.veryLong).toBe(false);
+    expect(analysis.avgLength).toBe(28);
+  });
+
+  it("measures cycle length between consecutive starts, including leap-year boundaries", () => {
+    const periods = derivePeriodsFromLogs(
+      [
+        ...periodLogs("2024-01-31", 4),
+        ...periodLogs("2024-02-29", 4),
+        ...periodLogs("2024-03-28", 4),
+        ...periodLogs("2024-04-25", 4),
+      ],
+    );
+    const cycles = getCompleteCycles(periods, { max: 99 });
+    expect(cycles.map((cycle) => cycle.length)).toEqual([29, 28, 28]);
+    const prediction = predictNextPeriod(periods);
+    expect(prediction.canPredict).toBe(true);
+    expect(prediction.window.start < prediction.window.center).toBe(true);
+    expect(prediction.window.center < prediction.window.end).toBe(true);
+  });
+
+  it("recalculates the median when a historical start date changes", () => {
+    const original = derivePeriodsFromLogs(
+      [0, 28, 56, 84].flatMap((offset) => periodLogs(addDays("2026-01-01", offset), 4)),
+    );
+    const edited = derivePeriodsFromLogs(
+      [0, 28, 56, 91].flatMap((offset) => periodLogs(addDays("2026-01-01", offset), 4)),
+    );
+    expect(predictNextPeriod(original).medianLength).toBe(28);
+    expect(predictNextPeriod(edited).medianLength).toBe(28);
+    expect(predictNextPeriod(edited).maxLength).toBe(35);
+    expect(predictNextPeriod(edited).maxLength).not.toBe(predictNextPeriod(original).maxLength);
   });
 
   it("pauses predictions in pregnancy mode", () => {
@@ -122,5 +158,23 @@ describe("predictions", () => {
     expect(prediction.canPredict).toBe(false);
     expect(prediction.reason).toBe("pregnancy");
     expect(prediction.window).toBeNull();
+  });
+});
+
+describe("insight series", () => {
+  it("does not put unfinished periods or missing logs onto charts as zero", () => {
+    const periods = [
+      { startDate: "2026-01-01", endDate: "2026-01-04", duration: 4 },
+      { startDate: "2026-01-29", endDate: "2026-02-01", duration: 4 },
+      { startDate: "2026-02-26", endDate: null },
+    ];
+    const insights = buildInsights(periods, [
+      { date: "2026-01-02", symptoms: ["cramps"], mood: "anxious" },
+      { date: "2026-01-03", symptoms: [] },
+    ]);
+    expect(insights.cycleChart.map((row) => row.length)).toEqual([28, 28]);
+    expect(insights.durationChart.map((row) => row.days)).toEqual([4, 4]);
+    expect(insights.symptomFrequency).toEqual([{ id: "cramps", count: 1, cycles: 1 }]);
+    expect(insights.moodEnergy.some((row) => row.mood === 0)).toBe(false);
   });
 });

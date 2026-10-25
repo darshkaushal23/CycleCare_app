@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ShieldCheck, Sparkles, Sprout } from "lucide-react";
+import { LogoMark, LogoWordmark } from "../components/art/Logo";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { ChoiceButton, ChoiceGroup } from "../components/ui/Input";
@@ -32,7 +33,11 @@ export function Onboarding({ onComplete }) {
 
   return (
     <div className="mx-auto min-h-dvh max-w-lg px-4 py-8">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-lavender-500">
+      <div className="flex items-center gap-3">
+        <LogoMark className="h-14 w-14 shrink-0" />
+        <LogoWordmark className="text-3xl leading-none" />
+      </div>
+      <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-lavender-500">
         {text("onboarding.kicker")}
       </p>
       <h1 className="mt-3 font-display text-4xl leading-tight text-ink-900">{text("onboarding.title")}</h1>

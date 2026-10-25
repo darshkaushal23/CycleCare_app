@@ -1,4 +1,4 @@
-import { sourceList } from "./sources";
+import { sourceList } from "./sources.js";
 
 function lesson(id, icon, en, hi, sourceIds) {
   return { id, icon, sources: sourceList(sourceIds), en, hi };
@@ -9,7 +9,7 @@ export const LESSONS = [
     "basics",
     "cycle",
     {
-      title: "Menstrual cycle basics",
+      title: "What is a period cycle?",
       summary: "Bleeding is one part of a cycle that starts on the first day of a period.",
       body: [
         "A menstrual cycle is counted from the first day of one period to the first day of the next. Bleeding often lasts about 2–7 days, but that is a typical range, not a rule for every body.",
@@ -18,7 +18,7 @@ export const LESSONS = [
       ],
     },
     {
-      title: "मासिक चक्र की मूल बातें",
+      title: "पीरियड चक्र क्या है?",
       summary: "रक्तस्राव चक्र का एक भाग है, जिसकी गिनती पीरियड के पहले दिन से होती है।",
       body: [
         "चक्र एक पीरियड के पहले दिन से अगले के पहले दिन तक गिना जाता है। रक्तस्राव अक्सर लगभग 2–7 दिन रहता है — यह आम सीमा है, हर शरीर का नियम नहीं।",
@@ -32,7 +32,7 @@ export const LESSONS = [
     "irregular",
     "wave",
     {
-      title: "Irregular periods",
+      title: "Why can period dates change?",
       summary: "Changing cycle length is common in some life stages and still worth naming honestly.",
       body: [
         "NHS suggests speaking with a GP if cycles are shorter than 21 days, if you bleed between periods, or if the pattern changes in a way that worries you.",
@@ -41,7 +41,7 @@ export const LESSONS = [
       ],
     },
     {
-      title: "अनियमित पीरियड",
+      title: "पीरियड की तारीखें क्यों बदल सकती हैं?",
       summary: "बदलती चक्र लंबाई कुछ अवस्थाओं में आम है, फिर भी ईमानदारी से नाम देना चाहिए।",
       body: [
         "NHS: 21 दिन से छोटे चक्र, पीरियड के बीच रक्तस्राव, या चिंता बढ़ाने वाला बदलाव हो तो GP से बात करें।",
@@ -53,10 +53,10 @@ export const LESSONS = [
   ),
   lesson(
     "pcos",
-    "info",
+    "pcos",
     {
-      title: "PCOS / PCOD — what it is, and what apps must not do",
-      summary: "In India, PCOD and PCOS are often used for the same condition. A tracker cannot diagnose it.",
+      title: "What is PCOS?",
+      summary: "PCOS is a hormone condition a doctor diagnoses. An app cannot say if you have it.",
       body: [
         "Polycystic ovary syndrome is a hormonal condition. In everyday talk in India, people often say PCOD and PCOS for the same thing. Clinicians use diagnostic criteria, not an app label.",
         "NHS explains that PCOS is diagnosed by a healthcare professional after checking several things — symptoms, examination, and often blood tests or ultrasound — not by a tracker score.",
@@ -65,8 +65,8 @@ export const LESSONS = [
       ],
     },
     {
-      title: "PCOS / PCOD — क्या है, और ऐप क्या नहीं कर सकता",
-      summary: "भारत में PCOD और PCOS अक्सर एक ही चीज़ के लिए बोले जाते हैं। ट्रैकर निदान नहीं कर सकता।",
+      title: "PCOS क्या है?",
+      summary: "PCOS एक हार्मोन स्थिति है जिसका निदान डॉक्टर करते हैं। ऐप यह नहीं बता सकता।",
       body: [
         "PCOS एक हार्मोनल स्थिति है। भारत में रोज़मर्रा की बात में PCOD और PCOS अक्सर एक ही अर्थ में आते हैं। चिकित्सक मापदंडों से निदान करते हैं, ऐप लेबल से नहीं।",
         "NHS के अनुसार PCOS स्वास्थ्य पेशेवर कई चीज़ें जाँचकर निदान करते हैं — लक्षण, जाँच और अक्सर रक्त/अल्ट्रासाउंड — ऐप स्कोर से नहीं।",
@@ -80,8 +80,8 @@ export const LESSONS = [
     "late",
     "wait",
     {
-      title: "Late periods",
-      summary: "A late period has more than one possible explanation. An app cannot pick one.",
+      title: "Why can a period be late?",
+      summary: "Periods can be late for different reasons, including stress or a change in your cycle.",
       body: [
         "A period can be late with stress, weight change, illness, travel, pregnancy, PCOS, or thyroid problems — among other reasons. NHS covers missed or stopped periods. Only clinical care can sort among them.",
         "If you might be pregnant, use a pregnancy test or clinic. CycleCare logs are not a test and cannot confirm or exclude pregnancy.",
@@ -89,8 +89,8 @@ export const LESSONS = [
       ],
     },
     {
-      title: "देर से पीरियड",
-      summary: "देरी के कई कारण हो सकते हैं। ऐप एक कारण नहीं चुन सकता।",
+      title: "पीरियड लेट क्यों हो सकती है?",
+      summary: "पीरियड कई कारणों से लेट हो सकती है, जैसे तनाव या चक्र में बदलाव।",
       body: [
         "तनाव, वजन बदलाव, बीमारी, यात्रा, गर्भ, PCOS या थायरॉइड सहित कई कारणों से पीरियड लेट हो सकती है। NHS रुकी/छूटी पीरियड कवर करता है। केवल चिकित्सकीय देखभाल उनमें से छांट सकती है।",
         "गर्भ संभव हो तो टेस्ट या क्लिनिक लें। CycleCare के लॉग टेस्ट नहीं हैं।",
@@ -103,8 +103,8 @@ export const LESSONS = [
     "cramps",
     "pain",
     {
-      title: "Cramps and period pain",
-      summary: "Pain that stops daily life is a reason to ask for help, not to 'push through' in silence.",
+      title: "Why do periods hurt?",
+      summary: "Cramps are common. Strong pain that stops school or work needs a doctor.",
       body: [
         "NHS describes period pain as common and also advises seeing a GP if pain is severe or stops normal activities.",
         "Heat, rest, and medicines a clinician says are appropriate may help some people. Do not start prescription medicine from an app suggestion — CycleCare does not prescribe.",
@@ -112,8 +112,8 @@ export const LESSONS = [
       ],
     },
     {
-      title: "ऐंठन और पीरियड दर्द",
-      summary: "रोज़मर्रा रोकने वाला दर्द मदद माँगने का कारण है, चुपचाप सहने का नहीं।",
+      title: "पीरियड में दर्द क्यों होता है?",
+      summary: "ऐंठन आम है। स्कूल या काम रोकने वाला तेज़ दर्द डॉक्टर से पूछें।",
       body: [
         "NHS पीरियड दर्द को आम बताता है और गंभीर या काम रोकने पर GP से मिलने को कहता है।",
         "गर्माहट, आराम और चिकित्सक द्वारा उचित दवा कुछ लोगों को मदद कर सकती है। ऐप से नुस्खा न शुरू करें।",
@@ -124,10 +124,10 @@ export const LESSONS = [
   ),
   lesson(
     "hygiene",
-    "care",
+    "pad",
     {
-      title: "Pads, cups and cloth",
-      summary: "How to use each more safely — comfort and infection prevention, not shame.",
+      title: "How do I use pads, cups, or cloth?",
+      summary: "Change pads, cloth, or cups often. Wash hands. Follow the pack.",
       body: [
         "Pads: change as often as your flow needs, often every few hours, and follow the pack. Wash hands before and after. Used pads go in a bin, not flushed.",
         "Cloth: wash with soap and water, dry fully in sunlight if you can, and change often. Damp cloth left in a bag can smell or irritate. Seek care for fever, rash, or pain.",
@@ -136,8 +136,8 @@ export const LESSONS = [
       ],
     },
     {
-      title: "पैड, कप और कपड़ा",
-      summary: "प्रत्येक का सुरक्षित उपयोग — आराम और संक्रमण रोकथाम, शर्म नहीं।",
+      title: "पैड, कप या कपड़ा कैसे इस्तेमाल करें?",
+      summary: "पैड, कपड़ा या कप अक्सर बदलें। हाथ धोएँ। पैक पढ़ें।",
       body: [
         "पैड: फ्लो के अनुसार बदलें, अक्सर कुछ घंटों में, पैक देखें। पहले-बाद हाथ धोएँ। इस्तेमाल पैड कूड़े में, शौचालय में नहीं।",
         "कपड़ा: साबुन से धोएँ, यदि हो सके धूप में सुखाएँ, अक्सर बदलें। गीला कपड़ा बैग में न छोड़ें। बुखार/चकत्ते/दर्द पर देखभाल लें।",
@@ -151,7 +151,7 @@ export const LESSONS = [
     "first",
     "first",
     {
-      title: "First periods",
+      title: "What is a first period like?",
       summary: "The first period can be light, irregular, or surprising. Support matters more than a perfect calendar.",
       body: [
         "ACOG explains menarche (the first period) and notes that early cycles are often irregular. There is no single 'correct' start age that an app can certify as healthy.",
@@ -160,7 +160,7 @@ export const LESSONS = [
       ],
     },
     {
-      title: "पहली पीरियड",
+      title: "पहली पीरियड कैसी होती है?",
       summary: "पहली पीरियड हल्की, अनियमित या अचानक हो सकती है। सही कैलेंडर से ज्यादा साथ मायने रखता है।",
       body: [
         "ACOG मेनार्चे समझाता है और कहता है कि शुरुआती चक्र अक्सर अनियमित होते हैं। ऐप किसी आयु को 'स्वस्थ' प्रमाणित नहीं कर सकता।",
@@ -174,7 +174,7 @@ export const LESSONS = [
     "warnings",
     "alert",
     {
-      title: "Medical warning signs",
+      title: "When should I see a doctor?",
       summary: "Some patterns should go to a clinician even if an app feels calm.",
       body: [
         "NHS lists reasons to see a GP including periods lasting longer than 7 days, bleeding between periods, very heavy bleeding, and period pain that stops normal life.",
@@ -183,7 +183,7 @@ export const LESSONS = [
       ],
     },
     {
-      title: "चिकित्सकीय चेतावनी संकेत",
+      title: "डॉक्टर कब दिखाऊँ?",
       summary: "कुछ पैटर्न ऐप शांत लगने पर भी चिकित्सक तक जाने चाहिए।",
       body: [
         "NHS: 7 दिन से अधिक पीरियड, बीच में रक्तस्राव, बहुत भारी फ्लो, और जीवन रोकने वाला दर्द GP से मिलने के कारण हैं।",

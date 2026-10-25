@@ -1,4 +1,4 @@
-import { Shield } from "lucide-react";
+import { Doodle } from "./art/Doodles";
 import { Card, CardKicker, CardTitle } from "./ui/Card";
 import { buildConfidence } from "../lib/confidence";
 import { formatDisplayDate } from "../lib/dates";
@@ -15,7 +15,7 @@ export function CycleConfidence({ analysis, ageGroup, lang, t, locale, showFerti
           </CardKicker>
           <CardTitle className="mt-2">{conf.label}</CardTitle>
         </div>
-        <Shield className="h-5 w-5 text-lavender-500" aria-hidden="true" />
+        <Doodle kind="chart" className="h-12 w-12 shrink-0" />
       </div>
       <p className="mt-3 text-sm leading-relaxed text-ink-700">{conf.detail}</p>
 
@@ -50,11 +50,14 @@ export function CycleConfidence({ analysis, ageGroup, lang, t, locale, showFerti
         </p>
       ) : null}
 
-      <ul className="mt-4 space-y-2 text-sm text-ink-700">
-        {conf.why.map((line) => (
-          <li key={line}>• {line}</li>
-        ))}
-      </ul>
+      <details className="mt-4 rounded-2xl bg-cream-50 p-3">
+        <summary className="cursor-pointer text-sm font-medium text-plum">{t("confidence.support")}</summary>
+        <ul className="mt-2 space-y-2 text-sm text-ink-700">
+          {conf.why.map((line) => (
+            <li key={line}>• {line}</li>
+          ))}
+        </ul>
+      </details>
       <p className="mt-3 text-sm text-ink-500">{t("today.contraception")}</p>
       {showFertility && conf.ovulationWindow && !conf.skipOvulation ? (
         <p className="mt-2 text-sm text-ink-700">

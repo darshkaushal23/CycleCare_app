@@ -216,17 +216,19 @@ export function predictNextPeriod(periods, { today = todayISO(), pregnancyMode =
 
 export function describeCyclePosition(periods, prediction, { today = todayISO() } = {}) {
   const last = prediction?.lastPeriod ?? [...periods].sort((a, b) => a.startDate.localeCompare(b.startDate)).at(-1);
-  if (!last) return { day: null, phase: "none", inPeriod: false };
+  if (!last) return { day: null, phase: "none", inPeriod: false, estimated: false };
   const day = daysBetween(last.startDate, today) + 1;
   const inPeriod = today >= last.startDate && today <= last.endDate;
-  if (inPeriod) return { day, phase: "period", inPeriod: true };
-  const fertile = prediction?.ovulationWindow;
-  if (fertile && today >= fertile.start && today <= fertile.end) {
-    return { day, phase: "fertile", inPeriod: false };
+  if (inPeriod) return { day, phase: "menstrual", inPeriod: true, estimated: false };
+  if (!prediction?.canPredict || prediction.irregular) {
+    return { day, phase: "uncertain", inPeriod: false, estimated: false };
   }
-  const typical = prediction?.medianLength ?? 28;
-  if (day <= Math.round(typical / 2)) return { day, phase: "afterPeriod", inPeriod: false };
-  return { day, phase: "beforePeriod", inPeriod: false };
+  const fertile = prediction.ovulationWindow;
+  if (fertile && today >= fertile.start && today <= fertile.end) {
+    return { day, phase: "ovulation", inPeriod: false, estimated: true };
+  }
+  if (fertile && today > fertile.end) return { day, phase: "luteal", inPeriod: false, estimated: true };
+  return { day, phase: "follicular", inPeriod: false, estimated: true };
 }
 
 export function predictedDates(prediction) {
@@ -356,11 +358,13 @@ export function buildInsights(periods, logs) {
       length: cycle.length,
       period: cycle.periodDuration,
     })),
-    durationChart: periods.map((period, index) => ({
-      name: `${index + 1}`,
-      start: period.startDate,
-      days: period.duration ?? daysBetween(period.startDate, period.endDate) + 1,
-    })),
+    durationChart: periods
+      .filter((period) => period.endDate)
+      .map((period, index) => ({
+        name: `${index + 1}`,
+        start: period.startDate,
+        days: period.duration ?? daysBetween(period.startDate, period.endDate) + 1,
+      })),
     symptomFrequency,
     recurringSymptoms,
     symptomPatterns,

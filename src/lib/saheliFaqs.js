@@ -13,10 +13,64 @@ const S = {
   fogsi: sourceList(["fogsi"]),
 };
 
+export const FAQ_CATEGORIES = [
+  "cycle",
+  "fertility",
+  "symptoms",
+  "mood",
+  "pcos",
+  "pregnancy",
+  "contraception",
+  "privacy",
+];
+
+const CATEGORY_BY_ID = {
+  "what-period": "cycle",
+  "cycle-length": "cycle",
+  "period-days": "cycle",
+  "first-period": "cycle",
+  "cycle-phases": "cycle",
+  "phase-overlap": "cycle",
+  "hygiene-pad": "cycle",
+  cloth: "cycle",
+  "tampon-tss": "cycle",
+  school: "cycle",
+  estimate: "cycle",
+  ovulation: "fertility",
+  "fertile-window": "fertility",
+  "day-14": "fertility",
+  "irregular-teen": "pcos",
+  pcos: "pcos",
+  "pcod-diff": "pcos",
+  diet: "pcos",
+  late: "pregnancy",
+  pregnancy: "pregnancy",
+  "missed-months": "pregnancy",
+  weight: "pregnancy",
+  stress: "mood",
+  mood: "mood",
+  "mood-pms": "mood",
+  heavy: "symptoms",
+  soaking: "symptoms",
+  "pain-school": "symptoms",
+  painkillers: "symptoms",
+  between: "symptoms",
+  exercise: "symptoms",
+  anaemia: "symptoms",
+  discharge: "symptoms",
+  cramps: "symptoms",
+  contraception: "contraception",
+  sex: "contraception",
+  privacy: "privacy",
+  "doctor-when": "privacy",
+  "india-clinic": "privacy",
+};
+
 function faq(id, tags, qEn, aEn, qHi, aHi, sources) {
   return {
     id,
     tags,
+    category: CATEGORY_BY_ID[id] ?? "cycle",
     en: { q: qEn, a: aEn },
     hi: { q: qHi, a: aHi },
     sources,
@@ -56,17 +110,99 @@ export const SAHELI_FAQS = [
   faq("anaemia", ["anaemia", "anemia", "tired", "एनीमिया", "थकान"], "Could heavy periods cause tiredness?", "Heavy bleeding can be associated with anaemia; CDC and NHS discuss this. Only a blood test can check. Feeling tired has many causes.", "क्या भारी पीरियड से थकान?", "भारी रक्तस्राव एनीमिया से जुड़ सकता है। केवल रक्त जाँच बता सकती है। थकान के कई कारण हैं।", S.heavy),
   faq("discharge", ["discharge", "itch", "smell", "स्राव"], "I have itching and discharge. Is it my period?", "Vaginal discharge and infections are separate from menstrual bleeding. See a clinic. Saheli cannot identify infections.", "खुजली और स्राव पीरियड है?", "स्राव और संक्रमण मासिक रक्तस्राव से अलग हैं। क्लिनिक जाएँ। सहेली संक्रमण नहीं पहचानती।", S.periods),
   faq("estimate", ["confidence", "predict", "window", "अनुमान"], "Why is my prediction a range?", "CycleCare uses the median of up to six logged cycles and widens the window when lengths vary. It is an estimate, not a validated probability score.", "भविष्यवाणी एक सीमा क्यों है?", "छह चक्र तक की मध्य लंबाई और अंतर पर चौड़ी विंडो। यह अनुमान है, प्रमाणित प्रतिशत नहीं।", S.periods),
+  faq("cycle-phases", ["phase", "follicular", "luteal", "menstrual", "चरण"], "What are the cycle phases?", "People often name four stages: menstrual, follicular, ovulation, and luteal. The menstrual phase overlaps the follicular phase — bleeding days are still part of follicular time. NHS cycle pages describe typical patterns; your days may differ. An app cannot confirm ovulation from a calendar.", "चक्र के चरण क्या हैं?", "अक्सर चार नाम: मासिक, फॉलिक्युलर, ओव्यूलेशन, ल्यूटियल। मासिक चरण फॉलिक्युलर के साथ ओवरलैप करता है। कैलेंडर से ओव्यूलेशन की पुष्टि नहीं होती।", S.periods),
+  faq("phase-overlap", ["overlap", "follicular", "menstrual", "ओवरलैप"], "Are the four phases separate boxes?", "No. Follicular time starts on day one of the period. Menstrual bleeding is a part of that stretch, not a completely separate biological box. CycleCare’s diagram shows that overlap on purpose.", "क्या चार चरण अलग डिब्बे हैं?", "नहीं। फॉलिक्युलर समय पीरियड के पहले दिन से शुरू होता है। रक्तस्राव उसी हिस्से का भाग है। CycleCare का चित्र यही ओवरलैप दिखाता है।", S.periods),
+  faq("fertile-window", ["fertile", "window", "उपजाऊ"], "What is a fertile window?", "Educational materials often describe the days around ovulation as a fertile window. CycleCare may show a rough range only when cycles are steadier. It is not confirmed and must not be used as contraception.", "उपजाऊ विंडो क्या है?", "शिक्षण सामग्री ओव्यूलेशन के आसपास के दिनों को उपजाऊ विंडो कहती है। CycleCare केवल अधिक स्थिर चक्र पर मोटी सीमा दिखा सकता है। यह पुष्टि या गर्भनिरोध नहीं है।", S.periods),
+  faq("mood-pms", ["mood", "pms", "irritable", "मूड"], "Why does my mood change before a period?", "Some people notice irritability, low mood, or anxiety in the luteal stretch. That pattern varies. Sudden severe mood change, self-harm thoughts, or symptoms that stop life need a clinician — not an app label of PMS or a mental-health diagnosis.", "पीरियड से पहले मूड क्यों बदलता है?", "कुछ लोगों को ल्यूटियल हिस्से में चिड़चिड़ापन या कम मूड दिखता है। यह पैटर्न बदलता है। गंभीर बदलाव या जीवन रोकने वाले लक्षण पर चिकित्सक से मिलें — ऐप PMS या मानसिक निदान नहीं लगाता।", S.pain),
+  faq("cramps", ["cramp", "heat", "ऐंठन"], "What helps period cramps?", "NHS notes heat, rest, and medicines a clinician or pharmacist says are appropriate may help some people. CycleCare does not prescribe. Pain that stops school, sport, or sleep is a reason to see a GP.", "ऐंठन में क्या मदद करे?", "NHS गर्माहट, आराम और चिकित्सक/फार्मासिस्ट की उचित दवा की बात करता है। ऐप नुस्खा नहीं देता। स्कूल रोकने वाला दर्द GP से मिलने का कारण है।", S.pain),
+  faq("day-14", ["day 14", "always", "midcycle", "14"], "Does ovulation always happen on day 14?", "No. Teaching materials often use mid-cycle as an average, not a personal test. CycleCare does not assume day 14 and cannot confirm ovulation from a calendar. An estimate is never contraception.", "क्या ओव्यूलेशन हमेशा दिन 14 होता है?", "नहीं। शिक्षण सामग्री बीच चक्र को औसत बताती है, व्यक्तिगत जाँच नहीं। CycleCare दिन 14 नहीं मानता और कैलेंडर से ओव्यूलेशन की पुष्टि नहीं करता। अनुमान गर्भनिरोध नहीं है।", S.periods),
 ];
 
-export function searchFaqs(query, lang = "en") {
+export const FAQ_LESSON = {
+  "what-period": "basics",
+  "cycle-length": "basics",
+  "period-days": "basics",
+  "cycle-phases": "basics",
+  "phase-overlap": "basics",
+  estimate: "basics",
+  "first-period": "first",
+  "irregular-teen": "irregular",
+  late: "late",
+  pregnancy: "late",
+  "missed-months": "late",
+  weight: "late",
+  stress: "late",
+  pcos: "pcos",
+  "pcod-diff": "pcos",
+  diet: "pcos",
+  heavy: "warnings",
+  soaking: "warnings",
+  between: "warnings",
+  anaemia: "warnings",
+  "doctor-when": "warnings",
+  "pain-school": "cramps",
+  painkillers: "cramps",
+  cramps: "cramps",
+  exercise: "cramps",
+  "mood-pms": "cramps",
+  "hygiene-pad": "hygiene",
+  cloth: "hygiene",
+  "tampon-tss": "hygiene",
+  school: "hygiene",
+  ovulation: "basics",
+  "fertile-window": "basics",
+  "day-14": "basics",
+  contraception: "late",
+};
+
+export function faqsByCategory(category) {
+  if (!category || category === "all") return SAHELI_FAQS;
+  return SAHELI_FAQS.filter((item) => item.category === category);
+}
+
+const STOP = new Set([
+  "do",
+  "i",
+  "a",
+  "an",
+  "the",
+  "is",
+  "am",
+  "are",
+  "my",
+  "me",
+  "to",
+  "for",
+  "of",
+  "in",
+  "on",
+  "and",
+  "or",
+  "have",
+  "has",
+  "what",
+  "why",
+  "how",
+  "can",
+  "should",
+  "this",
+  "that",
+  "with",
+  "from",
+]);
+
+export function searchFaqs(query, lang = "en", category = "all") {
+  const pool = faqsByCategory(category);
   const q = (query ?? "").trim().toLowerCase();
-  if (!q) return { matches: [], fallback: false };
-  const tokens = q.split(/\s+/).filter((token) => token.length > 1);
-  const scored = SAHELI_FAQS.map((item) => {
-    const blob = `${item.en.q} ${item.en.a} ${item.hi.q} ${item.hi.a} ${item.tags.join(" ")}`.toLowerCase();
-    const score = tokens.reduce((sum, token) => sum + (blob.includes(token) ? 1 : 0), 0);
-    return { item, score };
-  })
+  if (!q) return { matches: pool, fallback: false };
+  const tokens = q.split(/\s+/).filter((token) => token.length > 1 && !STOP.has(token));
+  if (!tokens.length) return { matches: [], fallback: true };
+  const scored = pool
+    .map((item) => {
+      const blob = `${item.en.q} ${item.en.a} ${item.hi.q} ${item.hi.a} ${item.tags.join(" ")} ${item.category}`.toLowerCase();
+      const score = tokens.reduce((sum, token) => sum + (blob.includes(token) ? 1 : 0), 0);
+      return { item, score };
+    })
     .filter((row) => row.score > 0)
     .sort((a, b) => b.score - a.score);
   return {

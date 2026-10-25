@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LogoMark, LogoWordmark } from "./art/Logo";
 import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 import { verifyPin, unlockSession } from "../lib/pin";
@@ -22,6 +23,10 @@ export function PinLock({ pinHash, t, onUnlock }) {
     <div className="mx-auto flex min-h-dvh max-w-sm items-center px-4">
       <form className="w-full" onSubmit={submit}>
         <Card>
+          <div className="mb-4 flex items-center gap-3">
+            <LogoMark className="h-12 w-12 shrink-0" />
+            <LogoWordmark className="text-2xl leading-none" />
+          </div>
           <h1 className="font-display text-2xl">{t("pin.title")}</h1>
           <p className="mt-2 text-sm text-ink-500">{t("pin.body")}</p>
           <input

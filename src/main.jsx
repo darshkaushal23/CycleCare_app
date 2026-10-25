@@ -1,5 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import "@fontsource/fraunces/latin-400.css";
+import "@fontsource/fraunces/latin-500.css";
+import "@fontsource/fraunces/latin-600.css";
+import "@fontsource/nunito-sans/latin-400.css";
+import "@fontsource/nunito-sans/latin-600.css";
+import "@fontsource/nunito-sans/latin-700.css";
 import App from "./App";
 import { AppStateProvider } from "./context/AppState";
 import "./index.css";

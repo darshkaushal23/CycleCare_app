@@ -70,6 +70,23 @@ export function emptyLog(date) {
   };
 }
 
+export function logFingerprint(log) {
+  const n = normalizeLog(log, log?.date);
+  return JSON.stringify({
+    periodStatus: n.periodStatus,
+    flow: n.flow,
+    pain: Number(n.pain) || 0,
+    symptoms: [...(n.symptoms ?? [])].sort(),
+    mood: n.mood ?? "",
+    energy: n.energy ?? "",
+    sleep: n.sleep ?? "",
+    sleepHours: n.sleepHours === "" || n.sleepHours == null ? "" : String(n.sleepHours),
+    medicines: n.medicines ?? "",
+    notes: n.notes ?? "",
+    followUp: n.followUp,
+  });
+}
+
 export function normalizeLog(log, date) {
   const base = emptyLog(date ?? log?.date);
   if (!log) return base;

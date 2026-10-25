@@ -27,7 +27,7 @@ const defaultSettings = {
   discreetMode: false,
   textScale: 100,
   highContrast: false,
-  readAloud: false,
+  readAloud: true,
   trackedSymptoms: DEFAULT_TRACKED_SYMPTOMS,
   pinHash: null,
   fertilityUnlocked: false,
@@ -35,10 +35,15 @@ const defaultSettings = {
   pregnancyLmp: null,
   reminders: defaultReminders,
   createdAt: null,
+  tourComplete: false,
 };
 
 function mergeSettings(saved) {
-  return { ...defaultSettings, ...(saved ?? {}) };
+  const next = { ...defaultSettings, ...(saved ?? {}) };
+  if (saved && saved.tourComplete == null) {
+    next.tourComplete = Boolean(saved.onboardingComplete);
+  }
+  return next;
 }
 
 export function AppStateProvider({ children }) {
@@ -88,6 +93,7 @@ export function AppStateProvider({ children }) {
         onboardingComplete: true,
         isDemo: mode === "demo",
         createdAt: todayISO(),
+        tourComplete: false,
       };
 
       if (mode === "demo") {

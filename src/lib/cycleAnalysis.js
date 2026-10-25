@@ -14,7 +14,7 @@ export function analyzeCycles(periods, logs, referenceDate = todayISO(), { pregn
   const derived = logs?.length ? derivePeriodsFromLogs(logs) : periods;
   const source = derived.length ? derived : periods;
   const prediction = predictNextPeriod(source, { today: referenceDate, pregnancyMode });
-  const lengths = prediction.allCycleLengths;
+  const lengths = prediction.cycleLengths;
   const position = describeCyclePosition(source, prediction, { today: referenceDate });
 
   let confidence = "none";

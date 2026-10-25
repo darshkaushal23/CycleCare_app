@@ -28,7 +28,6 @@ Production build: `npm run build`
 - Exported files are plaintext.
 - Not a clinician, pregnancy test, contraception method, or emergency service.
 - Settings cannot encrypt IndexedDB.
-- UI was not click-tested here in a real 360px browser session.
 
 ## 3-minute judge demo
 
@@ -40,4 +39,3 @@ Production build: `npm run build`
 6. Header language **हिन्दी**. **Settings**: discreet mode, export JSON.
 
 All demo screens use the same engines as a real user.
-# CycleCare_app

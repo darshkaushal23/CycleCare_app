@@ -99,7 +99,7 @@ create policy "post submit" on public.circle_posts for insert to authenticated w
 create policy "post delete own" on public.circle_posts for delete to authenticated using(author_id=(select auth.uid()));
 create policy "staff update posts" on public.circle_posts for update to authenticated
  using(exists(select 1 from public.circle_staff where user_id=(select auth.uid())))
- with check(exists(select 1 from public.circle_staff where user_id=(select auth.uid()))));
+ with check(exists(select 1 from public.circle_staff where user_id=(select auth.uid())));
 create policy "reports create" on public.circle_reports for insert to authenticated with check(reporter_id=(select auth.uid()) and exists (
  select 1 from public.circle_posts p join public.circle_members m on m.user_id=(select auth.uid())
  where p.id=post_id and p.age_space=m.age_space and p.status='approved'));

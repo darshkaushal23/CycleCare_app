@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { Doodle } from "../components/art/Doodles";
 import { CycleConfidence } from "../components/CycleConfidence";
+import { ForecastCard } from "../components/ForecastCard";
 import { MeanTip } from "../components/MeanTip";
 import { Button } from "../components/ui/Button";
 import { Card, CardKicker, CardTitle } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/States";
 import { useAppState } from "../context/AppState";
 import { evaluateCare } from "../lib/careEngine";
-import { buildInsights } from "../lib/cycle";
+import { buildInsights, isPeriodDay } from "../lib/cycle";
 import { formatDisplayDate, todayISO } from "../lib/dates";
 import { LESSONS } from "../lib/learnContent";
 import { reminderBanners } from "../lib/reminders";
@@ -91,6 +92,7 @@ export function Today() {
   const missed = analysis.prediction?.possibleMissed ?? [];
   const lesson = LESSONS[0]?.[lang] ?? LESSONS[0]?.en;
   const window = analysis.prediction?.window;
+  const onPeriod = Boolean(position.inPeriod || isPeriodDay(todayLog));
 
   let insightLine = lesson ? lesson.summary : t("today.insightNone");
   if (pattern?.kind === "cycle-days") {
@@ -116,9 +118,9 @@ export function Today() {
   );
 
   return (
-    <div className="page-enter mx-auto max-w-3xl space-y-4">
+    <div className={`page-enter mx-auto max-w-3xl space-y-4 ${onPeriod ? "rounded-3xl bg-rose-50 p-3 ring-1 ring-rose-200" : ""}`}>
       <header className="flex items-start gap-3">
-        <Doodle kind={greetingDoodle()} className="h-16 w-16 shrink-0" />
+        <Doodle kind={onPeriod ? "drop" : greetingDoodle()} className="h-16 w-16 shrink-0" />
         <div className="min-w-0">
           <p className="text-sm text-ink-500">
             {formatDisplayDate(today, locale, { weekday: "long", day: "numeric", month: "long" })}
@@ -133,6 +135,12 @@ export function Today() {
           {lang === "hi" ? banner.hi : banner.en}
         </Link>
       ))}
+
+      {onPeriod ? (
+        <p className="rounded-2xl bg-rose-100 px-4 py-3 font-display text-2xl text-rose-700 ring-2 ring-rose-300" role="status">
+          {t("today.periodToday")}
+        </p>
+      ) : null}
 
       {settings.isDemo ? (
         <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700" role="status">
@@ -169,7 +177,7 @@ export function Today() {
         </>
       ) : (
         <>
-          <Card>
+          <Card className={onPeriod ? "ring-2 ring-rose-300" : ""}>
             <div className="flex items-center gap-4">
               <CycleRing day={position.day} />
               <div className="min-w-0">
@@ -201,6 +209,14 @@ export function Today() {
               <Button className="w-full">{t("today.logToday")}</Button>
             </Link>
           </Card>
+
+          <ForecastCard
+            prediction={analysis.prediction}
+            t={t}
+            locale={locale}
+            showFertility={showFertility}
+            today={today}
+          />
 
           {quick}
 

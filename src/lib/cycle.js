@@ -231,6 +231,21 @@ export function describeCyclePosition(periods, prediction, { today = todayISO() 
   return { day, phase: "follicular", inPeriod: false, estimated: true };
 }
 
+export function periodForecast(prediction, today = todayISO()) {
+  const last = prediction?.lastPeriod ?? null;
+  const duration = prediction?.medianPeriodDuration;
+  const inPeriod = Boolean(last?.endDate && today >= last.startDate && today <= last.endDate);
+  const span = duration == null ? null : Math.max(0, Math.round(duration) - 1);
+  const thisEnd = last?.startDate && span != null ? addDays(last.startDate, span) : last?.endDate ?? null;
+  const nextEnd = prediction?.window?.center && span != null ? addDays(prediction.window.center, span) : null;
+  return {
+    nextPeriod: prediction?.window ?? null,
+    ovulation: prediction?.skipOvulation ? null : prediction?.ovulationWindow?.ovulation ?? null,
+    periodEnd: inPeriod ? thisEnd : nextEnd ?? thisEnd,
+    inPeriod,
+  };
+}
+
 export function predictedDates(prediction) {
   if (!prediction?.window) return [];
   return eachDay(prediction.window.start, prediction.window.end);

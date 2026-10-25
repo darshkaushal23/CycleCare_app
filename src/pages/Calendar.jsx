@@ -34,7 +34,7 @@ function cellTone({ inMonth, bleeding, estimate, canPhases, phase }) {
 }
 
 export function CalendarPage() {
-  const { t, lang, logs, analysis, settings, showFertility } = useAppState();
+  const { t, lang, logs, analysis, settings, showFertility, removeLog } = useAppState();
   const navigate = useNavigate();
   const today = todayISO();
   const [month, setMonth] = useState(() => startOfMonth(today));
@@ -214,6 +214,14 @@ export function CalendarPage() {
         phase={selectedPhase}
         canPhases={canPhases}
         onEdit={() => navigate(`/log?date=${selected}`)}
+        onDelete={
+          selectedLog
+            ? async () => {
+                if (!window.confirm(t("log.confirmDelete"))) return;
+                await removeLog(selected);
+              }
+            : null
+        }
       />
 
       <Card>
@@ -243,7 +251,7 @@ export function CalendarPage() {
   );
 }
 
-function SelectedCard({ t, locale, selected, log, bleed, estimate, phase, canPhases, onEdit }) {
+function SelectedCard({ t, locale, selected, log, bleed, estimate, phase, canPhases, onEdit, onDelete }) {
   const symptoms = log?.symptoms ?? [];
   const flow = log?.flow && log.flow !== "none" ? t(`log.flowOpts.${log.flow}`) : null;
   const estimatedPhase = canPhases && phase.kind === "estimate";
@@ -286,9 +294,16 @@ function SelectedCard({ t, locale, selected, log, bleed, estimate, phase, canPha
         {estimate ? <Row kicker={t("calendar.predict")} value={t("calendar.inWindow")} /> : null}
       </dl>
 
-      <Button className="mt-4 w-full" onClick={onEdit}>
-        {t("calendar.openLog")}
-      </Button>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <Button className="flex-1" onClick={onEdit}>
+          {log ? t("calendar.editLog") : t("calendar.openLog")}
+        </Button>
+        {onDelete ? (
+          <Button variant="secondary" className="flex-1" onClick={onDelete}>
+            {t("log.delete")}
+          </Button>
+        ) : null}
+      </div>
     </Card>
   );
 }

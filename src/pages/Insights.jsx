@@ -12,10 +12,12 @@ import {
 } from "recharts";
 import { Link } from "react-router-dom";
 import { Doodle } from "../components/art/Doodles";
+import { ForecastCard } from "../components/ForecastCard";
 import { Card, CardKicker, CardTitle } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/States";
 import { useAppState } from "../context/AppState";
 import { buildInsights } from "../lib/cycle";
+import { todayISO } from "../lib/dates";
 import {
   ENERGY_CHART,
   energyChartPoint,
@@ -70,7 +72,8 @@ function LabelTip({ active, payload, label }) {
 }
 
 export function InsightsPage() {
-  const { t, periods, logs, settings } = useAppState();
+  const { t, lang, periods, logs, settings, showFertility } = useAppState();
+  const locale = lang === "hi" ? "hi-IN" : "en-IN";
   const insights = buildInsights(periods, logs);
   const noPeriods = periods.length === 0;
   const prediction = insights.prediction;
@@ -119,6 +122,13 @@ export function InsightsPage() {
 
       {noPeriods && logs.length === 0 ? null : (
       <>
+      <ForecastCard
+        prediction={prediction}
+        t={t}
+        locale={locale}
+        showFertility={showFertility}
+        today={todayISO()}
+      />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <Summary doodle="calendar" label={t("insights.typicalCycle")} value={prediction.medianLength != null ? Math.round(prediction.medianLength) : "—"} unit={prediction.medianLength != null ? t("insights.unitDays") : null} />
         <Summary doodle="drop" label={t("insights.typicalPeriod")} value={prediction.medianPeriodDuration != null ? Math.round(prediction.medianPeriodDuration) : "—"} unit={prediction.medianPeriodDuration != null ? t("insights.unitDays") : null} />

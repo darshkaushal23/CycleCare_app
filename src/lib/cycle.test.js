@@ -7,6 +7,7 @@ import {
   isBleedingLog,
   isPeriodDay,
   median,
+  periodForecast,
   predictNextPeriod,
   uncertaintySpread,
 } from "./cycle";
@@ -104,6 +105,23 @@ describe("predictions", () => {
     expect(prediction.ovulationWindow.ovulation).toBe(addDays(prediction.window.center, -14));
     expect(prediction.ovulationWindow.start).toBe(addDays(prediction.ovulationWindow.ovulation, -5));
     expect(prediction.ovulationWindow.end).toBe(prediction.ovulationWindow.ovulation);
+  });
+
+  it("shows the next period, ovulation, and when bleeding may end", () => {
+    const regular = derivePeriodsFromLogs(
+      [0, 28, 56, 84].flatMap((offset) => periodLogs(addDays("2026-01-01", offset), 4)),
+    );
+    const prediction = predictNextPeriod(regular, { today: "2026-03-30" });
+    const during = periodForecast(prediction, "2026-03-28");
+    expect(during.inPeriod).toBe(true);
+    expect(during.periodEnd).toBe("2026-03-29");
+    expect(during.nextPeriod).toEqual(prediction.window);
+    expect(during.ovulation).toBe(prediction.ovulationWindow.ovulation);
+
+    const after = periodForecast(prediction, "2026-04-10");
+    expect(after.inPeriod).toBe(false);
+    expect(after.periodEnd).toBe(addDays(prediction.window.center, 3));
+    expect(after.ovulation).toBe(prediction.ovulationWindow.ovulation);
   });
 
   it("asks about a forgotten period before counting a far-longer gap", () => {

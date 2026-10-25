@@ -6,3 +6,5 @@ dist
 .idea
 .env
 
+.vercel
+.cursor

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useUnsavedGuard } from "../context/UnsavedGuard";
 import { CalendarDays, Check, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
@@ -87,8 +87,8 @@ export function LogPage() {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [justSaved, setJustSaved] = useState(false);
   const [step, setStep] = useState(0);
+  const savingRef = useRef(false);
   const tracked = settings.trackedSymptoms?.length ? settings.trackedSymptoms : DEFAULT_TRACKED_SYMPTOMS;
   const visibleSymptoms = SYMPTOM_OPTIONS.filter((id) => tracked.includes(id));
   const savedDates = useMemo(() => new Set(logs.map((log) => log.date)), [logs]);
@@ -99,7 +99,6 @@ export function LogPage() {
     setDraft(normalizeLog(stored, date));
     setStatus("");
     setError("");
-    setJustSaved(false);
   }
 
   useEffect(() => {
@@ -133,7 +132,6 @@ export function LogPage() {
   }
 
   function patch(partial) {
-    setJustSaved(false);
     setStatus("");
     setDraft((current) => {
       const next = { ...current, ...partial };
@@ -169,16 +167,18 @@ export function LogPage() {
   }, [step]);
 
   async function onSave(event) {
-    event.preventDefault();
+    event?.preventDefault();
+    if (savingRef.current) return;
+    savingRef.current = true;
     setBusy(true);
     setError("");
     try {
       await saveLog({ ...draft, date });
       setStatus(t("log.saved"));
-      setJustSaved(true);
     } catch {
       setError(t("log.saveFailed"));
     } finally {
+      savingRef.current = false;
       setBusy(false);
     }
   }
@@ -192,7 +192,6 @@ export function LogPage() {
       await removeLog(date);
       setDraft(emptyLog(date));
       setStatus("");
-      setJustSaved(false);
     } catch {
       setError(t("log.saveFailed"));
     } finally {
@@ -202,6 +201,14 @@ export function LogPage() {
 
   const lastStep = 4;
   const stepLabel = t("log.stepOf").replace("{n}", String(step + 1)).replace("{total}", String(lastStep + 1));
+
+  useEffect(() => {
+    if (step !== lastStep || !dirty) return undefined;
+    const timer = window.setTimeout(() => {
+      onSave();
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [step, dirty, draft]);
 
   function goNext() {
     if (step === 0 && !periodOn) setStep(2);
@@ -558,7 +565,7 @@ export function LogPage() {
       ) : null}
 
       </div>
-      {justSaved && stored ? (
+      {stored ? (
         <Card className="bg-lavender-50">
           <div className="flex items-start gap-2">
             <Check className="mt-0.5 h-4 w-4 text-plum" />
@@ -593,20 +600,20 @@ export function LogPage() {
             </Button>
           ) : null}
           {step < lastStep ? (
-            <>
-              <Button type="button" variant="ghost" className="flex-1" onClick={goNext}>
-                {t("log.skip")}
-              </Button>
-              <Button type="button" className="flex-1" onClick={goNext}>
-                {t("common.next")}
-              </Button>
-            </>
-          ) : (
-            <Button type="submit" className="flex-1" disabled={busy || !dirty}>
+            <Button type="button" variant="ghost" className="flex-1" onClick={goNext}>
+              {t("log.skip")}
+            </Button>
+          ) : null}
+          {dirty ? (
+            <Button type="submit" className="flex-1" disabled={busy}>
               {t("log.save")}
             </Button>
-          )}
-          {step === lastStep && stored ? (
+          ) : step < lastStep ? (
+            <Button type="button" className="flex-1" onClick={goNext}>
+              {t("common.next")}
+            </Button>
+          ) : null}
+          {stored ? (
             <Button type="button" variant="secondary" className="flex-1" disabled={busy} onClick={onDelete}>
               {t("log.delete")}
             </Button>

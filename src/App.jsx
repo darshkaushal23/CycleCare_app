@@ -6,6 +6,7 @@ import { ErrorState, LoadingState } from "./components/ui/States";
 import { useAppState } from "./context/AppState";
 import { isSessionUnlocked } from "./lib/pin";
 import { Onboarding } from "./pages/Onboarding";
+import { CommunityPage } from "./pages/Community";
 import { CalendarPage } from "./pages/Calendar";
 import { CarePage } from "./pages/Care";
 import { InsightsPage } from "./pages/Insights";
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/insights" element={<InsightsPage />} />
           <Route path="/learn" element={<LearnPage />} />
           <Route path="/saheli" element={<SaheliPage />} />
+          <Route path="/community" element={<CommunityPage />} />
           <Route path="/care" element={<CarePage />} />
           <Route path="/visit" element={<VisitSummaryPage />} />
           <Route path="/reminders" element={<RemindersPage />} />

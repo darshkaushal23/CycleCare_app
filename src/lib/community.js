@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-const url=import.meta.env.VITE_SUPABASE_URL;
-const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const url=import.meta.env.VITE_SUPABASE_URL || "https://wvmuytmygrhicxcljbzg.supabase.co";
+// This is a PUBLIC browser key; never use service-role credentials here.
+const key=import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "sb_publishable_WnFB9Vv2mdDiE9oseGJE8A_rufU6KMr";
 export const communityConfigured=Boolean(url&&key);
 export const community=communityConfigured?createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true}}):null;
 export async function joinCircle(age_space){
@@ -36,6 +37,8 @@ export async function deleteMyPosts(userId){
  const r=await community.from("circle_posts").delete().eq("author_id",userId);
  if(r.error)throw r.error;
 }
+export async function readReports(){const r=await community.from("circle_reports").select("*").order("created_at",{ascending:false}).limit(100);if(r.error)throw r.error;return r.data;}
+export async function resolveReport(id){const r=await community.from("circle_reports").update({status:"resolved"}).eq("id",id);if(r.error)throw r.error;}
 export async function getStaff(userId){
  const r=await community.from("circle_staff").select("*").eq("user_id",userId).maybeSingle();
  if(r.error)throw r.error;return r.data;

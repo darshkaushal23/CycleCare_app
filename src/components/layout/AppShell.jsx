@@ -25,6 +25,7 @@ const primaryNav = [
 ];
 
 const moreNav = [
+  { to: "/community", key: "community", icon: MessageCircleHeart },
   { to: "/care", key: "care", icon: HeartPulse },
   { to: "/learn", key: "learn", icon: BookOpen },
   { to: "/saheli", key: "saheli", icon: MessageCircleHeart },
@@ -50,7 +51,7 @@ export function AppShell() {
   const [moreOpen, setMoreOpen] = useState(false);
   const location = useLocation();
   const discreet = Boolean(settings.discreetMode);
-  const labelFor = (key) => (discreet ? t(`discreet.nav.${key}`) : t(`nav.${key}`));
+  const labelFor = (key) => key === "community" ? (lang === "hi" ? "सहेली सर्कल" : "Community") : (discreet ? t(`discreet.nav.${key}`) : t(`nav.${key}`));
 
   const moreActive = extraNav.some((item) => location.pathname.startsWith(item.to));
 

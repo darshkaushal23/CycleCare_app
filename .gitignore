@@ -2,5 +2,7 @@ node_modules
 dist
 .DS_Store
 *.local
+scripts/.community-sessions.json
+supabase/.temp/
 .vscode
 .idea

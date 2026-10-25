@@ -29,7 +29,7 @@ Production build: `npm run build`
 - Not a clinician, pregnancy test, contraception method, or emergency service.
 - Settings cannot encrypt IndexedDB.
 
-## 3-minute judge demo
+## 3-minute demo
 
 1. Choose **Try Demo** (fictional 17-year-old, irregular cycles).
 2. **Today**: Cycle Confidence range and walkthrough list.

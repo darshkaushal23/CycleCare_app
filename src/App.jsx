@@ -19,6 +19,7 @@ import { Today } from "./pages/Today";
 import { VisitSummaryPage } from "./pages/VisitSummary";
 
 const InsightsPage = lazy(() => import("./pages/Insights").then((mod) => ({ default: mod.InsightsPage })));
+const AssistantPage = lazy(() => import("./pages/Assistant").then((mod) => ({ default: mod.AssistantPage })));
 
 function GuardedShell() {
   return (
@@ -33,6 +34,15 @@ function InsightsRoute() {
   return (
     <Suspense fallback={<LoadingState label={t("common.loading")} />}>
       <InsightsPage />
+    </Suspense>
+  );
+}
+
+function AssistantRoute() {
+  const { t } = useAppState();
+  return (
+    <Suspense fallback={<LoadingState label={t("common.loading")} />}>
+      <AssistantPage />
     </Suspense>
   );
 }
@@ -52,6 +62,7 @@ const router = createBrowserRouter([
       { path: "/log", element: <LogPage /> },
       { path: "/insights", element: <InsightsRoute /> },
       { path: "/learn", element: <LearnPage /> },
+      { path: "/assistant", element: <AssistantRoute /> },
       { path: "/saheli", element: <SaheliPage /> },
       { path: "/care", element: <CarePage /> },
       { path: "/visit", element: <VisitSummaryPage /> },

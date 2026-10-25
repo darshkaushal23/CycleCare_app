@@ -9,6 +9,7 @@ import {
   Home,
   Languages,
   LayoutGrid,
+  MessageCircle,
   MessageCircleHeart,
   Settings,
   Sparkles,
@@ -26,10 +27,11 @@ const primaryNav = [
   { to: "/", key: "today", icon: Home, end: true },
   { to: "/calendar", key: "calendar", icon: CalendarDays },
   { to: "/log", key: "log", icon: ClipboardList },
-  { to: "/learn", key: "learn", icon: BookOpen },
+  { to: "/assistant", key: "assistant", icon: MessageCircle },
 ];
 
 const moreNav = [
+  { to: "/learn", key: "learn", icon: BookOpen, doodle: "journal" },
   { to: "/insights", key: "insights", icon: Sparkles, doodle: "chart" },
   { to: "/care", key: "care", icon: HeartPulse, doodle: "alert" },
   { to: "/saheli", key: "saheli", icon: MessageCircleHeart, doodle: "mood" },
